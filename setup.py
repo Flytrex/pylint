@@ -31,7 +31,6 @@ from os.path import exists, isdir, join
 
 __docformat__ = "restructuredtext en"
 
-
 try:
     from setuptools import setup
     from setuptools.command import easy_install as easy_install_lib
@@ -44,7 +43,6 @@ except ImportError:
 
     USE_SETUPTOOLS = 0
     easy_install_lib = None
-
 
 base_dir = os.path.dirname(__file__)
 
@@ -65,7 +63,6 @@ if exists(readme_path):
         long_description = stream.read()
 else:
     long_description = ""
-
 
 needs_pytest = {"pytest", "test", "ptr"}.intersection(sys.argv)
 pytest_runner = ["pytest-runner"] if needs_pytest else []
@@ -103,7 +100,6 @@ def _filter_tests(files):
 
 
 if easy_install_lib:
-
     class easy_install(easy_install_lib.easy_install):
         # override this since pip/easy_install attempt to byte compile
         # test data files, some of them being syntactically wrong by design,
@@ -111,6 +107,11 @@ if easy_install_lib:
         def byte_compile(self, files):
             files = _filter_tests(files)
             easy_install_lib.easy_install.byte_compile(self, files)
+
+
+def flytrex_version(version):
+    delimiter = "." if "+" in version else "+"
+    return f"{version}{delimiter}flytrex-1"
 
 
 def install(**kwargs):
@@ -137,7 +138,7 @@ def install(**kwargs):
         cmdclass["easy_install"] = easy_install
     return setup(
         name="pylint",
-        version=__pkginfo__["version"],
+        version=flytrex_version(__pkginfo__["version"]),
         license=__pkginfo__["license"],
         description=__pkginfo__["description"],
         long_description=long_description,
