@@ -395,3 +395,11 @@ contributors:
 * Ram Rachum (cool-RR)
 
 * Pieter Engelbrecht
+
+* Ethan Leba: contributor
+
+* Matěj Grabovský: contributor
+
+* Yeting Li (yetingli): contributor
+
+* Frost Ming (frostming): contributor
