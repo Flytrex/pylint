@@ -1262,14 +1262,8 @@ def get_node_last_lineno(node: astroid.node_classes.NodeNG) -> int:
 
 def is_postponed_evaluation_enabled(node: astroid.node_classes.NodeNG) -> bool:
     """Check if the postponed evaluation of annotations is enabled"""
-    name = "annotations"
     module = node.root()
-    stmt = module.locals.get(name)
-    return (
-        stmt
-        and isinstance(stmt[0], astroid.ImportFrom)
-        and stmt[0].modname == "__future__"
-    )
+    return "annotations" in module.future_imports
 
 
 def is_subclass_of(child: astroid.ClassDef, parent: astroid.ClassDef) -> bool:
@@ -1314,3 +1308,25 @@ def is_protocol_class(cls: astroid.node_classes.NodeNG) -> bool:
     # Use .ancestors() since not all protocol classes can have
     # their mro deduced.
     return any(parent.qname() in TYPING_PROTOCOLS for parent in cls.ancestors())
+
+
+def is_call_of_name(node: astroid.node_classes.NodeNG, name: str) -> bool:
+    """Checks if node is a function call with the given name"""
+    return (
+        isinstance(node, astroid.Call)
+        and isinstance(node.func, astroid.Name)
+        and node.func.name == name
+    )
+
+
+def is_test_condition(
+    node: astroid.node_classes.NodeNG,
+    parent: Optional[astroid.node_classes.NodeNG] = None,
+) -> bool:
+    """Returns true if the given node is being tested for truthiness"""
+    parent = parent or node.parent
+    if isinstance(parent, (astroid.While, astroid.If, astroid.IfExp, astroid.Assert)):
+        return node is parent.test or parent.test.parent_of(node)
+    if isinstance(parent, astroid.Comprehension):
+        return node in parent.ifs
+    return is_call_of_name(parent, "bool") and parent.parent_of(node)

@@ -403,3 +403,17 @@ contributors:
 * Yeting Li (yetingli): contributor
 
 * Frost Ming (frostming): contributor
+
+* Eli Fine (eli88fine): Fixed false positive duplicate code warning for lines with symbols only
+
+* Ganden Schaffner: contributor
+
+* Josselin Feist: contributor
+
+* David Cain: contributor
+
+* Luigi Bertaco Cristofolini (luigibertaco): contributor
+
+* Or Bahari
+
+* Joshua Cannon: contributor
