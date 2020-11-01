@@ -21,6 +21,7 @@
 # Copyright (c) 2019 Pierre Sassoulas <pierre.sassoulas@gmail.com>
 # Copyright (c) 2020 谭九鼎 <109224573@qq.com>
 # Copyright (c) 2020 Anthony Sottile <asottile@umich.edu>
+# Copyright (c) 2020 Guillaume Peillex <guillaume.peillex@gmail.com>
 
 # Licensed under the GPL: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 # For details: https://github.com/PyCQA/pylint/blob/master/COPYING
@@ -31,6 +32,7 @@ import configparser
 import contextlib
 import csv
 import functools
+import itertools
 import operator
 import platform
 import re
@@ -55,6 +57,7 @@ from pylint.utils import ASTWalker
 SYS_VERS_STR = "%d%d%d" % sys.version_info[:3]
 TITLE_UNDERLINES = ["", "=", "-", "."]
 PREFIX = abspath(dirname(__file__))
+UPDATE_OPTION = "--update-functional-output"
 
 
 def _get_tests_info(input_dir, msg_dir, prefix, suffix):
@@ -622,6 +625,16 @@ class LintModuleTest:
 
     def _check_output_text(self, expected_messages, expected_lines, received_lines):
         expected_lines = self._split_lines(expected_messages, expected_lines)[0]
-        assert (
-            expected_lines == received_lines
-        ), "Expected test lines did not match for test: {}".format(self._test_file.base)
+        for exp, rec in itertools.zip_longest(expected_lines, received_lines):
+            assert exp == rec, (
+                "Wrong output for '{_file}.txt':\n"
+                "You can update the expected output automatically with: '"
+                'python tests/test_functional.py {update_option} -k "test_functional[{_file}]"\'\n\n'
+                "Expected : {expected}\n"
+                "Received : {received}".format(
+                    update_option=UPDATE_OPTION,
+                    expected=exp,
+                    received=rec,
+                    _file=self._test_file.base,
+                )
+            )
