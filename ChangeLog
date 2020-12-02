@@ -1,6 +1,13 @@
 ------------------
 Pylint's ChangeLog
 ------------------
+* Only emit `bad-reversed-sequence` on dictionaries if below py3.8
+
+  Closes #3940
+
+* Handle class decorators applied to function.
+
+  Closes #3882
 
 * Add check for empty comments
 
@@ -9,6 +16,8 @@ Pylint's ChangeLog
 * Enums are now required to be named in UPPER_CASE by ``invalid-name``.
 
   Close #3834
+
+* Add missing checks for deprecated functions.
 
 
 What's New in Pylint 2.6.1?
